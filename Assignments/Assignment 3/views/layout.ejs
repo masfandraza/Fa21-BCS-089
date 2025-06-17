@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<!-- Cart Sidebar -->
+<div id="cartSidebar" class="cart-sidebar">
+  <div class="cart-header">
+    <h3>YOUR CART</h3>
+    <button onclick="toggleCart()" class="close-btn">&times;</button>
+  </div>
+  <div class="cart-body">
+    <p class="empty-message">Your cart is empty</p>
+    <button class="cart-btn">CONTINUE SHOPPING</button>
+  </div>
+    <div class="cart-footer">
+    <p>Subtotal: $0 USD</p>
+
+    <% if (typeof user !== 'undefined') { %>
+        <a href="/checkout" class="full-width-link">
+        <button class="checkout-btn full-width-btn">CHECK OUT</button>
+        </a>
+
+    <% } else { %>
+        <button class="checkout-btn disabled" disabled style="background-color: #ccc; cursor: not-allowed;">
+        CHECK OUT
+        </button>
+
+        <div class="cart-login-reminder" style="text-align: center; font-size: 14px; margin-top: 1rem;">
+        <p><strong>HAVE AN ACCOUNT?</strong><br />
+            <a href="/login" style="text-decoration: underline;">Log in</a> to check out faster.
+        </p>
+        </div>
+    <% } %>
+    </div>
+</div>
+
+<!-- Blur Background -->
+<div id="cartOverlay" class="cart-overlay" onclick="toggleCart()"></div>
+
+
+<script>
+  function toggleCart() {
+    const cart = document.getElementById("cartSidebar");
+    const overlay = document.getElementById("cartOverlay");
+
+    cart.classList.toggle("open");
+    overlay.classList.toggle("show");
+  }
+</script>
+
+
+
+<body>
+    <!-- Announcements Section -->
+    <div class="Announcements text-center py-2">
+        <div class="container-fluid d-flex justify-content-center flex-wrap">
+            <p class="mx-2 text-white mb-0">Free Delivery on Orders Over $200</p>
+            <span class="text-white mx-2">|</span>
+            <p class="mx-2 text-white mb-0">Spend & Save - up to 30% off</p>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <div class="Header container-fluid d-flex justify-content-between align-items-center py-2 border-bottom">
+        
+        <div class="header-left d-flex align-items-center gap-2">
+            <a href="https://www.google.com/maps/search/Ted+Baker+store+near+me" target="_blank" rel="noopener noreferrer" title="location-icon" class="d-flex align-items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke-width="0.9" stroke="currentColor" width="19" height="19" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                <path stroke-linecap="round" stroke-linejoin="round"
+                d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                </svg>
+            <span>Store Finder</span>
+</a>
+
+        </div>
+
+        <div class="header-center text-center">
+            <a href="/"><img src="/css/downloaded_images/tedbaker_icon_Ted_Baker.svg" alt="Logo" class="img-fluid"></a>
+        </div>
+
+        <div class="header-right d-flex align-items-center gap-3">
+            <a href="/login" title="profile-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="0.9" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg></a>
+
+            <a href="#" title="search-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="0.9" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg></a>
+
+            <a href=# onclick="toggleCart()" title="cart-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="0.9" stroke="currentColor" height="23px" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                </svg></a>
+        </div>
+    </div>
+
+
+
+    <div class='Navbar'>
+        <ul class="nav-links">
+            <li><a href="#">New In</a>
+                <ul class="Dropdown">
+                    <li><a href="#">Women's New Arrival</a></li>
+                    <li><a href="#">Men's New Arrival</a></li>
+                </ul>
+            </li>
+
+            <li><a href="#">Women</a>
+                <div class="Mega-Menu-1">
+                    <div class="mega-content">
+                        <div class="row">
+                            <header>Clothing</header>
+                            <ul class="mega-links">
+                                <li><a href="#">Dresses</a></li>
+                                <li><a href="#">Tops & T-Shirts</a></li>
+                                <li><a href="#">Coats & Jackets</a></li>
+                                <li><a href="#">Jumpsuits & Rompers</a></li>
+                                <li><a href="#">Skirts</a></li>
+                                <li><a href="#">Sweaters</a></li>
+                                <li><a href="#">Pants & Shorts</a></li>
+                                <li><a href="#">Suits & Co-ords</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="row">
+                            <header>Accessories</header>
+                            <ul class="mega-links">
+                                <li><a href="#">Bags</a></li>
+                                <li><a href="#">Wallets & Cardholders</a></li>
+                                <li><a href="#">Jewellery</a></li>
+                                <li><a href="#">Hats, Gloves & Scarves</a></li>
+                                <li><a href="#">Socks</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="row">
+                            <header>Shoes</header>
+                            <ul class="mega-links">
+                                <li><a href="#">Heels</a></li>
+                                <li><a href="#">Flats</a></li>
+                                <li><a href="#">Loafers</a></li>
+                                <li><a href="#">Sneakers</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li><a href="#">Men</a>
+                <div class="Mega-Menu-2">
+                    <div class="mega-content">
+                        <div class="row">
+                            <header>Clothing</header>
+                            <ul class="mega-links">
+                                <li><a href="#">Tops</a></li>
+                                <li><a href="#">Pants</a></li>
+                                <li><a href="#">Coats & Jackets</a></li>
+                                <li><a href="#">Blazers</a></li>
+                                <li><a href="#">Shirts</a></li>
+                                <li><a href="#">Sweaters</a></li>
+                                <li><a href="#">SweatShirts & Hoodies</a></li>
+                                <li><a href="#">Shorts</a></li>
+                                <li><a href="#">Suitings</a></li>
+                                <li><a href="#">Chinos</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="row">
+                            <header>Accessories</header>
+                            <ul class="mega-links">
+                                <li><a href="#">Bags & Backpacks</a></li>
+                                <li><a href="#">Wallets & Cardholders</a></li>
+                                <li><a href="#">Hats, Gloves & Scarves</a></li>
+                                <li><a href="#">Cufflings</a></li>
+                                <li><a href="#">Socks & Underwear</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="row">
+                            <header>Shoes</header>
+                            <ul class="mega-links">
+                                <li><a href="#">Dress Shoes</a></li>
+                                <li><a href="#">Loafers</a></li>
+                                <li><a href="#">Sneakers</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li><a href="#">Sale</a>
+                <div class="Mega-Menu-3">
+                    <div class="mega-content">
+                        <div class="row">
+                            <header>All Men's Sale</header>
+                            <ul class="mega-links">
+                                <li><a href="#">Men's Sale Shirts</a></li>
+                                <li><a href="#">Men's Sale Tops</a></li>
+                                <li><a href="#">Men's Sale Sweaters</a></li>
+                                <li><a href="#">Men's Sale Bottoms</a></li>
+                                <li><a href="#">Men's Sale Accessories</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="row">
+                            <header>All Women's Sale</header>
+                            <ul class="mega-links">
+                                <li><a href="#">Women's Sale Tops</a></li>
+                                <li><a href="#">Women's Sale Sweaters</a></li>
+                                <li><a href="#">Women's Sale Dresses</a></li>
+                                <li><a href="#">Women's Sale Bottoms</a></li>
+                                <li><a href="#">Women's Sale Accessories</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    
+
+
+    <%- body %>
+
+
+
+    <div class="News-letter">
+        <p class="heading">SIGN UP FOR OUR NEWSLETTER</p>
+        <p>For more information (including how to unsubscribe) please see our Help & FAQs and our Privacy Policy.
+        </p>
+        <div class="newsletter-form">
+            <form action="#" method="POST">
+                <label for="email"></label>
+                <div class="input-container">
+                    <input type="email" id="email" name="email" placeholder="Email" required>
+                    <button type="submit">JOIN</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <footer class="Footer">
+        <div class="footer-links">
+            <a href="#">Help & FAQs</a>
+            <a href="#">Delivery & Returns</a>
+            <a href="#">Customer Service</a>
+            <a href="#">Contact Us</a>
+            <a href="#">Track My Order</a>
+        </div>
+
+        <div class="social-media">
+
+            <a href="https://www.instagram.com/tedbaker/" title="Instagram" target="_blank" rel="noopener noreferrer">
+                <img width="25" height="25" src="https://img.icons8.com/fluency-systems-regular/50/instagram-new.png" alt="instagram-new" />
+            </a>
+
+            <a href="https://www.facebook.com/TedBaker/" title="Facebook" target="_blank" rel="noopener noreferrer">
+                <img width="25" height="25" src="https://img.icons8.com/ios/50/facebook-f.png" alt="facebook-f" />
+            </a>
+
+            <a href="https://twitter.com/Ted_Baker" title="Twitter" target="_blank" rel="noopener noreferrer">
+                <img width="25" height="25" src="https://img.icons8.com/ios/50/twitter--v1.png" alt="twitter--v1" />
+            </a>
+
+            <a href="https://www.pinterest.com/tedbaker/" title="Pinterest" target="_blank" rel="noopener noreferrer">
+                <img width="25" height="25" src="https://img.icons8.com/ios/50/pinterest--v1.png" alt="pinterest--v1" />
+            </a>
+
+            <a href="https://www.youtube.com/user/TedBakerTV" title="YouTube" target="_blank" rel="noopener noreferrer">
+                <img width="25" height="25" src="https://img.icons8.com/ios/50/youtube-play--v1.png" alt="youtube-play--v1" />
+            </a>
+
+        </div>
+
+
+        <div class="footer-policies">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Cookie Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Returns Policy</a>
+            <a href="#">Terms & Conditions</a>
+            <a href="#">Change Country</a>
+        </div>
+
+        <div class="footer-copyright">
+            <p>Ted Baker™ is a trademark of ABG-TB IPCO (UK) Limited.</p>
+            <p>©2024 ABG-TB IPCO (UK) Limited.</p>
+            <p>All Rights Reserved.</p>
+        </div>
+
+        <div class="payment-methods">
+            <img src="/css/downloaded_images/american-express.svg" alt="American Express">
+            <img src="/css/downloaded_images/applepay.svg" alt="Apple Pay">
+            <img src="/css/downloaded_images/discover-network.svg" alt="Discover">
+            <img src="/css/downloaded_images/paypal.svg" alt="Pay Pal">
+            <img src="/css/downloaded_images/mastercard.svg" alt="MasterCard">
+            <img src="/css/downloaded_images/google-wallet.svg" alt="Google Pay">
+            <img src="/css/downloaded_images/visa.svg" alt="Visa">
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
