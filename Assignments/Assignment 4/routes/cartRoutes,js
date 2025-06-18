@@ -1,0 +1,4 @@
+router.get('/cart', (req, res) => {
+  const cart = req.session.cart || { items: {}, totalQty: 0, totalPrice: 0 };
+  res.render('cart', { layout: 'layout', cart });
+});
