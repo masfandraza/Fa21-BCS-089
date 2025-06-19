@@ -1,0 +1,164 @@
+<head>
+  <link rel="stylesheet" href="/css/product-detail.css" />
+  <title><%= product.name %> | Ted Baker</title>
+  <style>
+    .product-page-container {
+      max-width: 100%;
+      padding: 0 5vw;
+    }
+
+    .product-images-wrapper {
+      display: flex;
+      gap: 2%;
+    }
+
+    .product-images-wrapper img {
+      width: 49%;
+      height: auto;
+      object-fit: cover;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .modal-body table th, .modal-body table td {
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+
+<div class="container-fluid product-page-container my-5">
+  <% if (breadcrumb) { %>
+    <nav aria-label="breadcrumb" class="small mb-3">
+      <ol class="breadcrumb">
+        <% breadcrumb.forEach((item, index) => { %>
+          <% if (item.href && index < breadcrumb.length - 1) { %>
+            <li class="breadcrumb-item"><a href="<%= item.href %>" class="text-muted"><%= item.label %></a></li>
+          <% } else { %>
+            <li class="breadcrumb-item active" aria-current="page"><%= item.label %></li>
+          <% } %>
+        <% }) %>
+      </ol>
+    </nav>
+  <% } %>
+
+  <div class="row">
+    <!-- LEFT: Product Images -->
+    <div class="col-md-6 mb-4 mb-md-0">
+      <div class="product-images-wrapper">
+        <img src="<%= product.image %>" alt="<%= product.name %>">
+        <% if (product.hoverImage) { %>
+          <img src="<%= product.hoverImage %>" alt="<%= product.name %> Hover">
+        <% } %>
+      </div>
+    </div>
+
+    <!-- RIGHT: Product Info -->
+    <div class="col-md-6">
+      <h2 class="fw-bold text-uppercase mb-2"><%= product.name %></h2>
+      <p class="text-muted mb-2" style="font-size: 0.95rem;"><%= product.description %></p>
+      <h4 class="mb-3" style="font-size: 0.95rem;">$<%= product.price %></h4>
+
+      <p class="mb-1" style="font-size: 0.95rem;">COLOR: <span class="text-uppercase">Taupe</span></p>
+      <div class="d-flex gap-2 mb-3">
+        <div class="color-swatch bg-primary"></div>
+        <div class="color-swatch bg-secondary"></div>
+        <div class="color-swatch bg-success"></div>
+        <div class="color-swatch bg-dark"></div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" style="font-size: 0.95rem;">SIZE:</label>
+        <select class="form-select w-50" style="font-size: 0.95rem;">
+          <option selected>Ted Size 1 (XS)</option>
+          <option>Ted Size 2 (S)</option>
+          <option>Ted Size 3 (M)</option>
+        </select>
+      </div>
+
+      <!-- Size Chart Link -->
+      <div class="mb-3">
+        <a href="#" class="text-decoration-underline small" data-bs-toggle="modal" data-bs-target="#sizeChartModal">Size Chart</a>
+      </div>
+
+      <!-- Quantity -->
+      <div class="d-flex align-items-center mb-4" style="width: 180px;">
+        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="adjustQty(-1)">−</button>
+        <input type="text" id="quantity" name="quantity" class="form-control text-center mx-2" value="1" readonly>
+        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="adjustQty(1)">+</button>
+      </div>
+
+      <!-- Add to Cart -->
+      <form action="/add-to-cart/<%= product._id %>" method="POST">
+        <button type="submit" class="btn btn-dark w-100 btn-lg mb-2">ADD TO CART</button>
+      </form>
+
+      <!-- Shop Pay Image -->
+      <div class="text-center mb-3">
+        <img src="/css/downloaded_images/google-wallet.svg" alt="Shop Pay" style="height: 45px;">
+      </div>
+
+      <!-- Promo -->
+      <div class="text-muted small">
+        <p>
+          Save With Authentic Membership – <strong>10% Off</strong> & Free Shipping.
+          <a href="#">Try for Free</a> | <a href="#">Log In</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Size Chart Modal -->
+<div class="modal fade" id="sizeChartModal" tabindex="-1" aria-labelledby="sizeChartLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="sizeChartLabel">Ted Baker Size Charts – Menswear</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <table class="table table-bordered text-center align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>TED SIZES</th>
+              <th>UK</th>
+              <th>CHEST (CM)</th>
+              <th>COLLAR (CM)</th>
+              <th>WAIST (CM)</th>
+              <th>INSIDE LEG (CM)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>XS</td><td>86.4</td><td>36.8</td><td>71.1</td><td>81.3</td></tr>
+            <tr><td>2</td><td>S</td><td>91.4</td><td>38.1</td><td>76.2</td><td>81.3</td></tr>
+            <tr><td>3</td><td>M</td><td>96.5</td><td>39.4</td><td>81.3</td><td>81.3</td></tr>
+            <tr><td>4</td><td>L</td><td>102</td><td>40.6</td><td>86.4</td><td>81.3</td></tr>
+            <tr><td>5</td><td>XL</td><td>107</td><td>41.9</td><td>91.4</td><td>81.3</td></tr>
+            <tr><td>6</td><td>XXL</td><td>112</td><td>43.2</td><td>96.5</td><td>81.3</td></tr>
+            <tr><td>7</td><td>XXXL</td><td>117</td><td>44.5</td><td>102</td><td>81.3</td></tr>
+          </tbody>
+        </table>
+
+        <hr>
+
+        <h6 class="mt-4">HOW TO MEASURE:</h6>
+        <p><span>Collar / Neck:</span> Wrap a measuring tape around the base of your neck where a shirt collar would sit. Keep it snug but not tight (allowing room for one finger).</p>
+        <p><span>Chest:</span> Measure around the fullest part of your chest under the arms. Keep the tape snug but not tight.</p>
+        <p><span>Body Length:</span> Measure from the highest shoulder point near your neck down to the desired hemline.</p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function adjustQty(change) {
+    const input = document.getElementById('quantity');
+    let value = parseInt(input.value) || 1;
+    input.value = Math.max(1, value + change);
+  }
+</script>

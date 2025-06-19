@@ -1,0 +1,42 @@
+<head>
+    <link rel="stylesheet" href="/css/login.css">
+    <title>Ted Baker | Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+
+<div class="login-wrapper">
+  <div class="login-container">
+    <h2>LOGIN</h2>
+    <form action="/login" method="POST">
+        <input type="email" name="email" placeholder="Email" required>
+        <div class="password-container">
+            <input type="password" name="password" id="loginPassword" placeholder="Password" required />
+            <i class="bi bi-eye-slash toggle-icon" id="toggleLoginPassword"></i>
+        </div>
+
+        <div class="forgot-password">
+            <a href="/forgot-password">Forgot your password?</a>
+        </div>
+        <button type="submit">SIGN IN</button>
+    </form>
+
+    <script>
+        const toggleLoginPassword = document.getElementById('toggleLoginPassword');
+        const loginPassword = document.getElementById('loginPassword');
+
+        toggleLoginPassword.addEventListener('click', () => {
+            const type = loginPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            loginPassword.setAttribute('type', type);
+            toggleLoginPassword.classList.toggle('bi-eye');
+            toggleLoginPassword.classList.toggle('bi-eye-slash');
+        });
+    </script>
+
+    <div class="create-account">
+        <a href="/signup" class="underline-link">Create account</a>
+    </div>
+
+  </div>
+</div>
+
+

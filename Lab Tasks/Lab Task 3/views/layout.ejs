@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<!-- Cart Sidebar -->
+<div id="cartSidebar" class="cart-sidebar">
+    <div class="cart-header">
+        <h3>YOUR CART</h3>
+        <button onclick="toggleCart()" class="close-btn">&times;</button>
+    </div>
+    <div class="cart-body">
+        <% if (cart && Object.keys(cart.items).length> 0) { %>
+            <ul class="cart-items-list list-unstyled px-0 w-100">
+                <% Object.values(cart.items).forEach(({ product, quantity })=> { %>
+                    <li id="cart-item-<%= product._id %>" 
+                        class="cart-item p-3 mb-4 border rounded shadow-sm bg-white w-100 position-relative" 
+                        style="min-height: 150px;">
+
+                    <div class="d-flex flex-column flex-sm-row gap-3 align-items-start">
+                        <img src="<%= product.image %>" alt="<%= product.name %>" width="70" height="85" class="rounded border" />
+
+                        <div class="flex-grow-1 w-100">
+                        <p class="fw-semibold text-uppercase mb-2" style="font-size: 0.95rem;">
+                            <%= product.name %>
+                        </p>
+
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            <button onclick="updateCart('<%= product._id %>', 'decrease')" class="btn btn-outline-secondary btn-sm px-2">−</button>
+                            <span id="qty-<%= product._id %>" class="fw-medium"><%= quantity %></span>
+                            <button onclick="updateCart('<%= product._id %>', 'increase')" class="btn btn-outline-secondary btn-sm px-2">+</button>
+                        </div>
+
+                        <div>
+                            <small class="text-muted">Total:</small>
+                            <strong id="total-<%= product._id %>" class="ms-1">$<%= (quantity * product.price).toFixed(2) %></strong>
+                        </div>
+                        </div>
+                    </div>
+
+                    <!-- Absolute Remove Button -->
+                    <button 
+                        onclick="removeFromCart('<%= product._id %>')" 
+                        class="btn btn-sm btn-outline-danger p-1 position-absolute" 
+                        style="bottom: 10px; right: 10px;" 
+                        title="Remove">
+                        <i class="bi bi-trash fs-5"></i>
+                    </button>
+                </li>
+
+
+
+
+
+
+                    <% }) %>
+            </ul>
+            <a href="/products" class="checkout-btn full-width-btn">CONTINUE SHOPPING</a>
+
+
+            <% } else { %>
+                <div class="d-flex flex-column justify-content-center align-items-center text-center" style="height: 300px;">
+                    <p class="mb-3">Your cart is empty</p>
+                    <a href="/products" class="btn btn-dark px-4 py-2 text-uppercase fw-bold">Continue Shopping</a>
+                </div>
+            <% } %>
+
+    </div>
+
+    <div class="cart-footer px-3">
+        <p>Subtotal: $<%= cart ? cart.totalPrice.toFixed(2) : '0.00' %> USD</p>
+
+        <% if (typeof user !== 'undefined' && cart && Object.keys(cart.items).length > 0) { %>
+            <a href="/checkout" class="full-width-link">
+                <button class="checkout-btn full-width-btn">CHECK OUT</button>
+            </a>
+        <% } else { %>
+            <button class="checkout-btn disabled full-width-btn" disabled
+                style="background-color: #ccc; cursor: not-allowed;">CHECK OUT</button>
+
+            <% if (typeof user === 'undefined') { %>
+                <div class="cart-login-reminder text-center" style="font-size: 14px; margin-top: 1rem;">
+                    <p><strong>HAVE AN ACCOUNT?</strong><br />
+                        <a href="/login" style="text-decoration: underline;">Log in</a> to check out faster.
+                    </p>
+                </div>
+            <% } else if (!cart || Object.keys(cart.items).length === 0) { %>
+                <div class="cart-login-reminder text-center" style="font-size: 14px; margin-top: 1rem;">
+                    <p>Your cart is empty.</p>
+                </div>
+            <% } %>
+        <% } %>
+
+    </div>
+
+</div>
+
+<!-- Blur Background -->
+<div id="cartOverlay" class="cart-overlay" onclick="toggleCart()"></div>
+
+
+<script>
+    function toggleCart() {
+        const cart = document.getElementById("cartSidebar");
+        const overlay = document.getElementById("cartOverlay");
+
+        cart.classList.toggle("open");
+        overlay.classList.toggle("show");
+    }
+</script>
+
+<script>
+    function updateCart(productId, action) {
+        fetch(`/update-cart/${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ action })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the quantity and total
+                    document.getElementById(`qty-${productId}`).innerText = data.newQty;
+                    document.getElementById(`total-${productId}`).innerText = `= $${data.itemTotal.toFixed(2)}`;
+                    document.querySelector('.cart-footer p').innerText = `Subtotal: $${data.cartTotal.toFixed(2)} USD`;
+                } else {
+                    location.reload(); // fallback if something's missing
+                }
+            })
+            .catch(err => console.error('Cart update error', err));
+    }
+</script>
+
+
+<script>
+    function removeFromCart(productId) {
+        fetch(`/remove-from-cart/${productId}`, {
+            method: 'POST'
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove the item card
+                    const itemElement = document.getElementById(`cart-item-${productId}`);
+                    if (itemElement) itemElement.remove();
+
+                    // Update subtotal
+                    document.querySelector('.cart-footer p').innerText = `Subtotal: $${data.cartTotal.toFixed(2)} USD`;
+
+                    // If cart is now empty, show empty message
+                    if (Object.keys(data.remainingItems).length === 0) {
+                        document.querySelector('.cart-body').innerHTML = `
+          <p class="empty-message text-center">Your cart is empty</p>
+          <a href="/products" class="checkout-btn full-width-btn">CONTINUE SHOPPING</a>
+        `;
+                    }
+                }
+            })
+            .catch(err => console.error('Failed to remove item', err));
+    }
+</script>
+
+<script>
+  setTimeout(() => {
+    const alert = document.querySelector('.alert');
+    if (alert) {
+      alert.classList.remove('show');
+      alert.classList.add('fade');
+
+      // Wait for transition (300ms) then remove the element
+      setTimeout(() => {
+        alert.remove();
+      }, 300); // Bootstrap's default fade duration
+    }
+  }, 3000);
+</script>
+
+
+<script>
+  function toggleSearchBar() {
+    const container = document.getElementById("searchContainer");
+    container.classList.toggle("d-none");
+  }
+</script>
+
+
+
+<body>
+
+
+            <!-- Announcements Section -->
+            <div class="Announcements text-center py-2">
+                <div class="container-fluid d-flex justify-content-center flex-wrap">
+                    <p class="mx-2 text-white mb-0">Free Delivery on Orders Over $200</p>
+                    <span class="text-white mx-2">|</span>
+                    <p class="mx-2 text-white mb-0">Spend & Save - up to 30% off</p>
+                </div>
+            </div>
+
+           
+
+
+            <% if (error) { %>
+                <div class="alert alert-danger alert-dismissible fade show text-center w-100 rounded-0 border-0 mb-0" role="alert" style="margin: 0;">
+                    <%= error %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <% } %>
+
+
+            <!-- Header Section -->
+            <div class="Header container-fluid d-flex justify-content-between align-items-center py-2 border-bottom">
+
+                <div class="header-left d-flex align-items-center gap-2">
+                    <a href="https://www.google.com/maps/search/Ted+Baker+store+near+me" target="_blank"
+                        rel="noopener noreferrer" title="location-icon" class="d-flex align-items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="0.9"
+                            stroke="currentColor" width="19" height="19" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                        </svg>
+                        <span>Store Finder</span>
+                    </a>
+
+                </div>
+
+                <div class="header-center text-center">
+                    <a href="/"><img src="/css/downloaded_images/tedbaker_icon_Ted_Baker.svg" alt="Logo"
+                            class="img-fluid"></a>
+                </div>
+
+                <div class="header-right d-flex align-items-center gap-3 position-relative">
+
+                    <!-- Profile Dropdown -->
+                    <div class="dropdown">
+                        <a href="#" class="dropdown-toggle d-flex align-items-center" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="profile-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="0.9" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <% if (typeof user !== 'undefined') { %>
+                                <li><a class="dropdown-item" href="/profile">My Profile</a></li>
+                                <li><a class="dropdown-item" href="/my-orders">My Orders</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                            <% } else { %>
+                                <li><a class="dropdown-item" href="/login">Login</a></li>
+                                <li><a class="dropdown-item" href="/signup">Register</a></li>
+                            <% } %>
+                        </ul>
+
+                    </div>
+
+                    <!-- Search Icon -->
+                    <a href="javascript:void(0);" onclick="toggleSearchBar()" title="search-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="0.9" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                        </svg>
+                    </a>
+
+                    <!-- Search Form (toggleable) -->
+                    <div id="searchContainer" class="position-absolute d-none" style="top: 100%; right: 70px; z-index: 1050;">
+                        <form action="/search" method="GET" class="bg-white p-2 shadow rounded">
+                            <input type="text" name="q" class="form-control form-control-sm" placeholder="Search products..." style="width: 180px;">
+                        </form>
+                    </div>
+
+                    <!-- Cart Icon -->
+                    <a href="#" onclick="toggleCart()" title="cart-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="0.9" stroke="currentColor" height="23px" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                        </svg>
+                    </a>
+                </div>
+
+            </div>
+
+
+
+            <div class='Navbar'>
+                <ul class="nav-links">
+                    <li><a href="#">New In</a>
+                        <ul class="Dropdown">
+                            <li><a href="/products?category=Women">Women's New Arrival</a></li>
+                            <li><a href="/products?category=Men">Men's New Arrival</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="#">Women</a>
+                        <div class="Mega-Menu-1">
+                            <div class="mega-content">
+                                <div class="row">
+                                    <header>Clothing</header>
+                                    <ul class="mega-links">
+                                        <li><a href="#">Dresses</a></li>
+                                        <li><a href="#">Tops & T-Shirts</a></li>
+                                        <li><a href="#">Coats & Jackets</a></li>
+                                        <li><a href="#">Jumpsuits & Rompers</a></li>
+                                        <li><a href="#">Skirts</a></li>
+                                        <li><a href="#">Sweaters</a></li>
+                                        <li><a href="#">Pants & Shorts</a></li>
+                                        <li><a href="#">Suits & Co-ords</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="row">
+                                    <header>Accessories</header>
+                                    <ul class="mega-links">
+                                        <li><a href="#">Bags</a></li>
+                                        <li><a href="#">Wallets & Cardholders</a></li>
+                                        <li><a href="#">Jewellery</a></li>
+                                        <li><a href="#">Hats, Gloves & Scarves</a></li>
+                                        <li><a href="#">Socks</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="row">
+                                    <header>Shoes</header>
+                                    <ul class="mega-links">
+                                        <li><a href="#">Heels</a></li>
+                                        <li><a href="#">Flats</a></li>
+                                        <li><a href="#">Loafers</a></li>
+                                        <li><a href="#">Sneakers</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li><a href="#">Men</a>
+                        <div class="Mega-Menu-2">
+                            <div class="mega-content">
+                                <div class="row">
+                                    <header>Clothing</header>
+                                    <ul class="mega-links">
+                                        <li><a href="#">Tops</a></li>
+                                        <li><a href="#">Pants</a></li>
+                                        <li><a href="#">Coats & Jackets</a></li>
+                                        <li><a href="#">Blazers</a></li>
+                                        <li><a href="#">Shirts</a></li>
+                                        <li><a href="#">Sweaters</a></li>
+                                        <li><a href="#">SweatShirts & Hoodies</a></li>
+                                        <li><a href="#">Shorts</a></li>
+                                        <li><a href="#">Suitings</a></li>
+                                        <li><a href="#">Chinos</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="row">
+                                    <header>Accessories</header>
+                                    <ul class="mega-links">
+                                        <li><a href="#">Bags & Backpacks</a></li>
+                                        <li><a href="#">Wallets & Cardholders</a></li>
+                                        <li><a href="#">Hats, Gloves & Scarves</a></li>
+                                        <li><a href="#">Cufflings</a></li>
+                                        <li><a href="#">Socks & Underwear</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="row">
+                                    <header>Shoes</header>
+                                    <ul class="mega-links">
+                                        <li><a href="#">Dress Shoes</a></li>
+                                        <li><a href="#">Loafers</a></li>
+                                        <li><a href="#">Sneakers</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li><a href="#">Sale</a>
+                        <div class="Mega-Menu-3">
+                            <div class="mega-content">
+                                <div class="row">
+                                    <header>All Men's Sale</header>
+                                    <ul class="mega-links">
+                                        <li><a href="#">Men's Sale Shirts</a></li>
+                                        <li><a href="#">Men's Sale Tops</a></li>
+                                        <li><a href="#">Men's Sale Sweaters</a></li>
+                                        <li><a href="#">Men's Sale Bottoms</a></li>
+                                        <li><a href="#">Men's Sale Accessories</a></li>
+                                    </ul>
+                                </div>
+
+                                <div class="row">
+                                    <header>All Women's Sale</header>
+                                    <ul class="mega-links">
+                                        <li><a href="#">Women's Sale Tops</a></li>
+                                        <li><a href="#">Women's Sale Sweaters</a></li>
+                                        <li><a href="#">Women's Sale Dresses</a></li>
+                                        <li><a href="#">Women's Sale Bottoms</a></li>
+                                        <li><a href="#">Women's Sale Accessories</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+
+
+
+
+
+            <%- body %>
+
+
+
+                <div class="News-letter">
+                    <p class="heading">SIGN UP FOR OUR NEWSLETTER</p>
+                    <p>For more information (including how to unsubscribe) please see our Help & FAQs and our Privacy
+                        Policy.
+                    </p>
+                    <div class="newsletter-form">
+                        <form action="#" method="POST">
+                            <label for="email"></label>
+                            <div class="input-container">
+                                <input type="email" id="email" name="email" placeholder="Email" required>
+                                <button type="submit">JOIN</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <footer class="Footer">
+                    <div class="footer-links">
+                        <a href="#">Help & FAQs</a>
+                        <a href="#">Delivery & Returns</a>
+                        <a href="#">Customer Service</a>
+                        <a href="#">Contact Us</a>
+                        <a href="#">Track My Order</a>
+                    </div>
+
+                    <div class="social-media">
+
+                        <a href="https://www.instagram.com/tedbaker/" title="Instagram" target="_blank"
+                            rel="noopener noreferrer">
+                            <img width="25" height="25"
+                                src="https://img.icons8.com/fluency-systems-regular/50/instagram-new.png"
+                                alt="instagram-new" />
+                        </a>
+
+                        <a href="https://www.facebook.com/TedBaker/" title="Facebook" target="_blank"
+                            rel="noopener noreferrer">
+                            <img width="25" height="25" src="https://img.icons8.com/ios/50/facebook-f.png"
+                                alt="facebook-f" />
+                        </a>
+
+                        <a href="https://twitter.com/Ted_Baker" title="Twitter" target="_blank"
+                            rel="noopener noreferrer">
+                            <img width="25" height="25" src="https://img.icons8.com/ios/50/twitter--v1.png"
+                                alt="twitter--v1" />
+                        </a>
+
+                        <a href="https://www.pinterest.com/tedbaker/" title="Pinterest" target="_blank"
+                            rel="noopener noreferrer">
+                            <img width="25" height="25" src="https://img.icons8.com/ios/50/pinterest--v1.png"
+                                alt="pinterest--v1" />
+                        </a>
+
+                        <a href="https://www.youtube.com/user/TedBakerTV" title="YouTube" target="_blank"
+                            rel="noopener noreferrer">
+                            <img width="25" height="25" src="https://img.icons8.com/ios/50/youtube-play--v1.png"
+                                alt="youtube-play--v1" />
+                        </a>
+
+                    </div>
+
+
+                    <div class="footer-policies">
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Cookie Policy</a>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Returns Policy</a>
+                        <a href="#">Terms & Conditions</a>
+                        <a href="#">Change Country</a>
+                    </div>
+
+                    <div class="footer-copyright">
+                        <p>Ted Baker™ is a trademark of ABG-TB IPCO (UK) Limited.</p>
+                        <p>©2024 ABG-TB IPCO (UK) Limited.</p>
+                        <p>All Rights Reserved.</p>
+                    </div>
+
+                    <div class="payment-methods">
+                        <img src="/css/downloaded_images/american-express.svg" alt="American Express">
+                        <img src="/css/downloaded_images/applepay.svg" alt="Apple Pay">
+                        <img src="/css/downloaded_images/discover-network.svg" alt="Discover">
+                        <img src="/css/downloaded_images/paypal.svg" alt="Pay Pal">
+                        <img src="/css/downloaded_images/mastercard.svg" alt="MasterCard">
+                        <img src="/css/downloaded_images/google-wallet.svg" alt="Google Pay">
+                        <img src="/css/downloaded_images/visa.svg" alt="Visa">
+                    </div>
+                </footer>
+
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+
+
+
+</html>
