@@ -1,0 +1,17 @@
+.card-header code {
+  font-family: monospace;
+  background-color: #f1f1f1;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.4em 0.75em;
+}
+
+.btn-sm {
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}

@@ -1,0 +1,28 @@
+<head>
+  <title>All Orders | Admin</title>
+</head>
+
+<div class="container my-5">
+  <h3 class="text-center mb-4">All Orders</h3>
+
+  <table class="table table-bordered table-hover shadow-sm bg-white">
+    <thead class="table-dark">
+      <tr>
+        <th>Order ID</th>
+        <th>Customer</th>
+        <th>Total</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% orders.forEach(order => { %>
+        <tr>
+          <td><%= order._id %></td>
+          <td><%= order.user.firstName %> <%= order.user.lastName %></td>
+          <td>$<%= order.cart.totalPrice.toFixed(2) %></td>
+          <td><%= order.createdAt.toDateString() %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>

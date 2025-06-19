@@ -1,0 +1,78 @@
+<head>
+  <title>Order <%= order._id %> | Admin</title>
+  <link rel="stylesheet" href="/css/products.css" />
+</head>
+
+<div class="container my-5">
+
+  <a href="/admin/users/<%= order._id %>/orders" 
+     onclick="history.back();return false;"  <!-- Fallback -->
+     class="btn btn-sm btn-outline-secondary mb-3">← Back</a>
+
+  <h3 class="mb-4">Order Details</h3>
+
+  <div class="row g-4">
+
+    <!-- Left - Basic Info -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm">
+        <div class="card-header fw-semibold">Summary</div>
+        <div class="card-body">
+          <p><strong>Order ID:</strong> <%= order._id %></p>
+          <p><strong>Date:</strong> <%= order.createdAt.toDateString() %></p>
+          <p><strong>Status:</strong> <%= order.status %></p>
+          <p><strong>Total:</strong> $<%= order.cart.totalPrice.toFixed(2) %></p>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mt-3">
+        <div class="card-header fw-semibold">Customer</div>
+        <div class="card-body">
+          <p><%= order.user.firstName %> <%= order.user.lastName %></p>
+          <p><%= order.user.email %></p>
+          <p><%= order.user.phone %></p>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mt-3">
+        <div class="card-header fw-semibold">Address</div>
+        <div class="card-body">
+          <p>
+            <%= order.user.address %><br>
+            <%= order.user.city %>, <%= order.user.country %> <%= order.user.zip %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right - Items -->
+    <div class="col-lg-8">
+      <div class="table-responsive shadow-sm">
+        <table class="table table-bordered align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Product</th>
+              <th class="text-center" style="width:120px;">Qty</th>
+              <th class="text-end" style="width:120px;">Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% order.cart.items.forEach(it => { %>
+              <tr>
+                <td>
+                  <%= it.name %>
+                  <% if (it.productId && it.productId.image) { %>
+                    <br><img src="<%= it.productId.image %>" width="50" class="mt-1">
+                  <% } %>
+                </td>
+                <td class="text-center"><%= it.quantity %></td>
+                <td class="text-end">$<%= (it.price * it.quantity).toFixed(2) %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<div class="container my-5" style="max-width: 600px;">
+  <h2 class="mb-4">Edit Vehicle</h2>
+
+  <form action="/admin/vehicles/<%= vehicle._id %>" method="POST" enctype="multipart/form-data">
+    <div class="mb-3">
+      <label class="form-label">Name</label>
+      <input type="text" name="name" class="form-control" value="<%= vehicle.name %>" required />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Brand</label>
+      <input type="text" name="brand" class="form-control" value="<%= vehicle.brand %>" required />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Price</label>
+      <input type="number" name="price" class="form-control" value="<%= vehicle.price %>" required />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Type</label>
+      <select name="type" class="form-select" required>
+        <option value="Sedan" <%= vehicle.type === 'Sedan' ? 'selected' : '' %>>Sedan</option>
+        <option value="SUV" <%= vehicle.type === 'SUV' ? 'selected' : '' %>>SUV</option>
+        <option value="Truck" <%= vehicle.type === 'Truck' ? 'selected' : '' %>>Truck</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label d-block">Current Image</label>
+      <img src="<%= vehicle.image %>" alt="Current" class="mb-2" style="height: 70px;">
+      <input type="file" name="image" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-dark w-100">Update Vehicle</button>
+  </form>
+</div>

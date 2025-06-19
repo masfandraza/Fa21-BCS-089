@@ -1,0 +1,95 @@
+<head>
+  <title>My Profile | Ted Baker</title>
+  <link rel="stylesheet" href="/css/login.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+
+<!-- Breadcrumb -->
+<div class="container mt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb small mb-3">
+      <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-dark">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">My Profile</li>
+    </ol>
+  </nav>
+</div>
+
+<!-- Profile Card Container -->
+<div class="container" style="max-width: 650px;">
+  <div class="bg-white p-4 border rounded shadow-sm">
+
+    <h3 class="text-center text-uppercase fw-semibold mb-4">My Profile</h3>
+
+    <% if (success) { %>
+      <div class="alert alert-success text-center"><%= success %></div>
+    <% } %>
+    <% if (error) { %>
+      <div class="alert alert-danger text-center"><%= error %></div>
+    <% } %>
+
+    <form action="/profile" method="POST" enctype="multipart/form-data">
+
+      <!-- Profile Image -->
+      <div class="text-center mb-4">
+        <img src="<%= user.profileImage || '/css/defaults/default-profile.png' %>"
+             alt="Profile Picture"
+             class="rounded-circle border"
+             style="width: 100px; height: 100px; object-fit: cover;">
+      </div>
+
+      <div class="mb-3">
+        <label for="profileImage" class="form-label small text-muted fw-semibold">Profile Picture</label>
+        <input type="file" class="form-control form-control-sm" name="profileImage" id="profileImage" accept="image/*">
+      </div>
+
+      <!-- Name -->
+      <div class="mb-3">
+        <label for="name" class="form-label small text-muted fw-semibold">Full Name</label>
+        <input type="text" class="form-control form-control-sm" name="name" id="name" value="<%= user.name %>" required>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label for="email" class="form-label small text-muted fw-semibold">Email (read-only)</label>
+        <input type="email" class="form-control form-control-sm" value="<%= user.email %>" readonly>
+      </div>
+
+      <!-- Phone -->
+      <div class="mb-3">
+        <label for="phone" class="form-label small text-muted fw-semibold">Phone</label>
+        <input type="text" class="form-control form-control-sm" name="phone" id="phone" value="<%= user.phone || '' %>">
+      </div>
+
+      <!-- Address -->
+      <div class="mb-3">
+        <label for="address" class="form-label small text-muted fw-semibold">Address</label>
+        <input type="text" class="form-control form-control-sm" name="address" id="address" value="<%= user.address || '' %>">
+      </div>
+
+      <!-- City / Country / ZIP -->
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="city" class="form-label small text-muted fw-semibold">City</label>
+          <input type="text" class="form-control form-control-sm" name="city" id="city" value="<%= user.city || '' %>">
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="country" class="form-label small text-muted fw-semibold">Country</label>
+          <input type="text" class="form-control form-control-sm" name="country" id="country" value="<%= user.country || '' %>">
+        </div>
+        <div class="col-md-2 mb-3">
+          <label for="zip" class="form-label small text-muted fw-semibold">ZIP</label>
+          <input type="text" class="form-control form-control-sm" name="zip" id="zip" value="<%= user.zip || '' %>">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-dark w-100 text-uppercase">Update Profile</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  setTimeout(() => {
+    const alert = document.querySelector('.alert');
+    if (alert) alert.style.display = 'none';
+  }, 3000);
+</script>

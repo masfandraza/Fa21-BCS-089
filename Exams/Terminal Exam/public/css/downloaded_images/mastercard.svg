@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 40 40" viewBox="0 0 40 40" id="mastercard">
+  <switch>
+    <g>
+      <g>
+        <circle cx="26" cy="20" r="10" fill="#f79e1d"></circle>
+        <circle cx="14" cy="20" r="10" fill="#ec001c"></circle>
+      </g>
+    </g>
+  </switch>
+</svg>

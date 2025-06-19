@@ -1,0 +1,59 @@
+<head>
+  <title><%= selectedUser.name %> Orders | Admin</title>
+  <link rel="stylesheet" href="/css/products.css" />
+</head>
+
+<div class="container my-5">
+  <h3 class="mb-4 text-center">Orders for <%= selectedUser.name %></h3>
+
+  <div class="mb-3">
+    <a href="/admin/users" class="btn btn-sm btn-outline-secondary">← Back to Users</a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle bg-white shadow-sm">
+      <thead class="table-light">
+        <tr>
+          <th>Order ID</th>
+          <th>Date</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% orders.forEach(order => { %>
+          <tr>
+            <td><%= order._id %></td>
+            <td><%= order.createdAt.toDateString() %></td>
+            <td>$<%= order.cart.totalPrice.toFixed(2) %></td>
+
+            <!-- Status Update Dropdown -->
+            <td>
+              <form action="/admin/orders/<%= order._id %>/status" method="POST" class="d-flex align-items-center gap-2">
+                <select name="status" class="form-select form-select-sm w-auto">
+                  <% ['Processing', 'Shipped', 'Delivered', 'Cancelled'].forEach(opt => { %>
+                    <option value="<%= opt %>" <%= order.status === opt ? 'selected' : '' %>><%= opt %></option>
+                  <% }) %>
+                </select>
+                <button type="submit" class="btn btn-sm btn-success">Update</button>
+              </form>
+            </td>
+
+            <!-- View + Cancel -->
+            <td class="d-flex gap-2">
+              <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+
+              <!-- Cancel sets status to Cancelled -->
+              <form action="/admin/orders/<%= order._id %>/status" method="POST">
+  <input type="hidden" name="status" value="Cancelled" />
+  <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+</form>
+
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
