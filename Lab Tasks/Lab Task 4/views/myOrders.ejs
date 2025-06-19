@@ -1,0 +1,93 @@
+<head>
+  <title>My Orders | Ted Baker</title>
+  <link rel="stylesheet" href="/css/myOrders.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+
+<!-- Breadcrumb -->
+<div class="container mt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb small mb-3">
+      <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-dark">Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">My Orders</li>
+    </ol>
+  </nav>
+</div>
+
+<div class="container my-5" style="max-width: 950px;">
+  <h4 class="text-center text-uppercase fw-semibold mb-5">My Orders</h4>
+
+  <% if (!orders || orders.length === 0) { %>
+    <div class="text-center">
+      <p>You have not placed any orders yet.</p>
+      <a href="/products" class="btn btn-dark mt-3 px-4 py-2 text-uppercase">Start Shopping</a>
+    </div>
+  <% } else { %>
+    <% orders.forEach(order => { %>
+      <div class="border rounded shadow-sm mb-4 bg-white">
+
+        <!-- Header Section with light gray background -->
+        <div class="px-4 py-3" style="background-color: #e3e1e1;">
+          <div class="d-flex justify-content-between flex-wrap align-items-center">
+            <div>
+              <small class="text-muted d-block">Order ID</small>
+              <code style="font-size: 0.8rem; color: #d63384;"><%= order._id %></code>
+            </div>
+            <div class="text-end">
+              <small class="text-muted d-block">Placed On</small>
+              <span style="font-size: 0.85rem;">
+                <%= order.createdAt.toLocaleDateString() %>,
+                <%= order.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %>
+              </span>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end mt-2">
+            <span class="badge bg-secondary text-uppercase px-3 py-1" style="font-size: 0.7rem;">
+              <%= order.status || 'Processing' %>
+            </span>
+          </div>
+        </div>
+
+        <!-- Order Details -->
+        <div class="p-4">
+
+          <!-- User Info -->
+          <div class="mb-3">
+            <p class="mb-1" style="font-size: 0.9rem;">
+              <strong>Name:</strong> <%= order.user.firstName %> <%= order.user.lastName %>
+            </p>
+            <p class="mb-1" style="font-size: 0.9rem;">
+              <strong>Address:</strong> <%= order.user.address %>, <%= order.user.city %>, <%= order.user.country %>, <%= order.user.zip %>
+            </p>
+            <p class="mb-0" style="font-size: 0.9rem;"><strong>Email:</strong> <%= order.user.email %></p>
+          </div>
+
+          <!-- Items -->
+          <div class="mb-3">
+            <p class="fw-semibold mb-2" style="font-size: 0.92rem;">Items in this Order</p>
+            <ul class="list-group list-group-flush small">
+              <% order.cart.items.forEach(item => { %>
+                <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                  <span><%= item.name %> × <%= item.quantity %></span>
+                  <strong>$<%= (item.price * item.quantity).toFixed(2) %></strong>
+                </li>
+              <% }) %>
+            </ul>
+          </div>
+
+          <!-- Total + Action Buttons -->
+          <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-3">
+            <span class="fw-bold" style="font-size: 1rem;">Total: $<%= order.cart.totalPrice.toFixed(2) %></span>
+            <div class="d-flex gap-2">
+              <a href="#" class="btn btn-outline-secondary btn-sm px-3">Track</a>
+              <a href="#" class="btn btn-outline-secondary btn-sm px-3">Return</a>
+              <a href="/products" class="btn btn-dark btn-sm px-3">Buy Again</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    <% }) %>
+  <% } %>
+</div>
